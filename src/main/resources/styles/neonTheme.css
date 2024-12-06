@@ -1,0 +1,95 @@
+/* neonTheme.css - A bold, futuristic neon theme */
+
+.root {
+    -fx-font-family: "Open Sans", sans-serif;
+    -fx-background-color: linear-gradient(to bottom, #000000, #050505);
+    -fx-text-fill: #39ff14;
+}
+
+.welcome-title {
+    -fx-font-size: 50px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ff00ff;
+    -fx-effect: dropshadow(gaussian,#ff00ff,10,0.7,0,0);
+    -fx-padding: 20;
+}
+
+.subtitle {
+    -fx-font-size: 24px;
+    -fx-text-fill: #39ff14;
+    -fx-effect: dropshadow(gaussian,#39ff14,5,0.5,0,0);
+}
+
+.label {
+    -fx-font-size: 18px;
+    -fx-text-fill: #ff00ff;
+}
+
+.client-count {
+    -fx-font-size: 36px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #39ff14;
+    -fx-effect: dropshadow(gaussian,#39ff14,5,0.5,0,0);
+}
+
+.section-title {
+    -fx-font-size: 36px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ff00ff;
+    -fx-effect: dropshadow(gaussian,#ff00ff,5,0.5,0,0);
+    -fx-padding: 10 0;
+}
+
+.text-field {
+    -fx-pref-width: 150px;
+    -fx-background-color: transparent;
+    -fx-text-fill: #39ff14;
+    -fx-border-color: #ff00ff;
+    -fx-border-radius: 5;
+    -fx-padding: 5;
+    -fx-effect: dropshadow(gaussian,#ff00ff,5,0.3,0,0);
+}
+
+.button {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-background-color: #ff00ff;
+    -fx-text-fill: #000000;
+    -fx-background-radius: 5;
+    -fx-padding: 10 20;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian,#ff00ff,5,0.5,0,0);
+}
+
+.button:hover {
+    -fx-background-color: #ff1493;
+}
+
+.text-area {
+    -fx-font-size: 16px;
+    -fx-control-inner-background: #1a1a1a;
+    -fx-text-fill: #39ff14;
+    -fx-border-color: #ff00ff;
+    -fx-border-radius: 5;
+    -fx-padding: 5;
+    -fx-effect: dropshadow(gaussian,#39ff14,3,0.3,0,0);
+}
+
+.menu-bar {
+    -fx-background-color: #000000;
+    -fx-border-color: #ff00ff;
+    -fx-border-width: 0 0 2px 0;
+}
+
+.card-pane {
+    -fx-padding: 10;
+    -fx-background-color: transparent;
+    -fx-border-color: #ff00ff;
+    -fx-border-radius: 5;
+}
+
+StackPane {
+    -fx-background-image: url("/images/background.jpg");
+    -fx-background-size: cover;
+    -fx-background-position: center;
+}

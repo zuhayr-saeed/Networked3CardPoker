@@ -1,0 +1,90 @@
+/* darkTheme.css - A sleek, modern dark theme */
+
+.root {
+    -fx-font-family: "Open Sans", sans-serif;
+    -fx-background-color: linear-gradient(to bottom, #2c2c2c, #1f1f1f);
+    -fx-text-fill: #ffffff;
+}
+
+.welcome-title {
+    -fx-font-size: 50px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ff9800;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 5,0.3,0,2);
+    -fx-padding: 20;
+}
+
+.subtitle {
+    -fx-font-size: 24px;
+    -fx-text-fill: #bbbbbb;
+}
+
+.label {
+    -fx-font-size: 18px;
+    -fx-text-fill: #e0e0e0;
+}
+
+.client-count {
+    -fx-font-size: 36px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ff9800;
+}
+
+.section-title {
+    -fx-font-size: 36px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ff9800;
+    -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.4),5,0.3,0,2);
+    -fx-padding: 10 0;
+}
+
+.text-field {
+    -fx-pref-width: 150px;
+    -fx-background-color: #3a3a3a;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #555555;
+    -fx-border-radius: 5;
+    -fx-padding: 5;
+}
+
+.button {
+    -fx-font-size: 20px;
+    -fx-background-color: #ff9800;
+    -fx-text-fill: #ffffff;
+    -fx-background-radius: 5;
+    -fx-padding: 10 20;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.4),3,0.3,0,2);
+}
+
+.button:hover {
+    -fx-background-color: #e68900;
+}
+
+.text-area {
+    -fx-font-size: 16px;
+    -fx-control-inner-background: #2e2e2e;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #444444;
+    -fx-border-radius: 5;
+    -fx-padding: 5;
+}
+
+.menu-bar {
+    -fx-background-color: #333333;
+    -fx-border-color: #444444;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.card-pane {
+    -fx-padding: 10;
+    -fx-background-color: #1e1e1e;
+    -fx-border-color: #444444;
+    -fx-border-radius: 5;
+}
+
+StackPane {
+    -fx-background-image: url("/images/background.jpg");
+    -fx-background-size: cover;
+    -fx-background-position: center;
+}
