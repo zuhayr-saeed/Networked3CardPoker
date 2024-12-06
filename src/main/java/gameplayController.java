@@ -9,6 +9,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.util.Duration;
+import javafx.animation.PauseTransition;
 import java.util.ArrayList;
 
 public class gameplayController {
@@ -29,8 +31,14 @@ public class gameplayController {
     private int anteBet = 0;
     private int pairPlusBet = 0;
     private boolean waitingForPlayDecision = false;
+
     private String[] themes = {"/styles/darkTheme.css","/styles/lightTheme.css","/styles/neonTheme.css"};
     private int currentThemeIndex = 0;
+
+    // We will store ROUND_RESULT info until after we reveal dealer cards and wait 5s
+    private String pendingResultMessage = null;
+    private int pendingResultWinnings = 0;
+    private boolean pendingResult = false;
 
     public void setClientConnection(ClientConnection connection) {
         this.clientConnection = connection;
@@ -39,6 +47,11 @@ public class gameplayController {
 
     public void updateGameInfo(String message) {
         Platform.runLater(() -> gameInfoArea.appendText(message + "\n"));
+    }
+
+    public void setTotalWinnings(int w) {
+        this.totalWinnings = w;
+        winningsLabel.setText(String.valueOf(w));
     }
 
     @FXML
@@ -91,16 +104,27 @@ public class gameplayController {
                 playerHandPane.getChildren().add(createCardImageView(c));
             }
 
-            for (Card c : dealerHand) {
-                if (dealerHidden) {
+            // If dealerHidden is true, show backs first
+            if (dealerHidden) {
+                for (int i = 0; i < dealerHand.size(); i++) {
                     dealerHandPane.getChildren().add(createCardBackImageView());
-                } else {
+                }
+            } else {
+                // If not hidden, just show dealer cards directly (might occur at fold scenario)
+                for (Card c : dealerHand) {
                     dealerHandPane.getChildren().add(createCardImageView(c));
                 }
             }
-            updateGameInfo("Cards dealt. Choose to Play or Fold.");
-            playFoldButton.setDisable(false);
-            waitingForPlayDecision = true;
+
+            if (dealerHidden) {
+                updateGameInfo("Cards dealt. Choose to Play or Fold.");
+                playFoldButton.setDisable(false);
+                waitingForPlayDecision = true;
+            } else {
+                // If dealer not hidden, we might be showing them after choosing "Play"
+                // In that case, we handle flipping animation and delayed result
+                revealDealerCardsWithDelay(dealerHand);
+            }
         });
     }
 
@@ -128,10 +152,75 @@ public class gameplayController {
         waitingForPlayDecision = false;
     }
 
-    public void showResult(String resultMessage, int totalWinnings) {
-        this.totalWinnings = totalWinnings;
+    /**
+     * Called when server sends SHOW_DEALER action to reveal dealer cards.
+     * We have dealer cards currently displayed as back. Let's flip them one by one.
+     */
+    private void revealDealerCardsWithDelay(ArrayList<Card> dealerHand) {
+        // Flip each card from back to front with a delay
+        // Simple approach: replace the back card after a short PauseTransition
+        // After all flipped, wait 5s, then if pending result is available, show result.
+
+        final int cardCount = dealerHandPane.getChildren().size();
+        if (cardCount != dealerHand.size()) {
+            // Just in case: cardCount should match dealerHand.size()
+            return;
+        }
+
+        // We'll use a recursive or sequential approach:
+        flipCardSequentially(dealerHand, 0);
+    }
+
+    private void flipCardSequentially(ArrayList<Card> dealerHand, int index) {
+        if (index >= dealerHand.size()) {
+            // All cards flipped, now wait 5 seconds before showing result (if pending)
+            PauseTransition wait = new PauseTransition(Duration.seconds(5));
+            wait.setOnFinished(e -> {
+                if (pendingResult) {
+                    showResult(pendingResultMessage, pendingResultWinnings);
+                    pendingResult = false;
+                    pendingResultMessage = null;
+                }
+            });
+            wait.play();
+            return;
+        }
+
+        // Simulate a flip by just replacing the card image after a short delay
+        PauseTransition pause = new PauseTransition(Duration.seconds(1));
+        pause.setOnFinished(e -> {
+            ImageView iv = (ImageView) dealerHandPane.getChildren().get(index);
+            Card c = dealerHand.get(index);
+            iv.setImage(new Image(getClass().getResourceAsStream(getCardFileName(c))));
+            // Move to the next card
+            flipCardSequentially(dealerHand, index + 1);
+        });
+        pause.play();
+    }
+
+    /**
+     * Called when server sends ROUND_RESULT action.
+     * Instead of showing result immediately, if we haven't revealed dealer cards fully or waited,
+     * we store the result and show it after the delay.
+     */
+    public void handleRoundResult(String resultMessage, int totalWinnings) {
+        this.pendingResultMessage = resultMessage;
+        this.pendingResultWinnings = totalWinnings;
+        this.pendingResult = true;
+        // If dealer cards are already revealed (fold scenario), we can show result immediately.
+        // If we folded, dealer cards might show instantly:
+        if (!waitingForPlayDecision && dealerHandPane.getChildren().isEmpty()) {
+            // In fold scenario, dealer might not be hidden at all, just show result now
+            showResult(resultMessage, totalWinnings);
+            pendingResult = false;
+            pendingResultMessage = null;
+        }
+    }
+
+    public void showResult(String resultMessage, int newTotalWinnings) {
+        this.totalWinnings = newTotalWinnings; // Update total winnings
         Platform.runLater(() -> {
-            winningsLabel.setText("$" + totalWinnings);
+            winningsLabel.setText(String.valueOf(totalWinnings));
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/resultScreen.fxml"));
                 Parent root = loader.load();
@@ -157,7 +246,7 @@ public class gameplayController {
     @FXML
     private void handleFreshStart(ActionEvent event) {
         totalWinnings = 0;
-        winningsLabel.setText("$0");
+        winningsLabel.setText("0");
         gameInfoArea.clear();
         anteField.clear();
         pairPlusField.clear();

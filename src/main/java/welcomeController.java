@@ -29,7 +29,6 @@ public class welcomeController {
                 return;
             }
 
-            // Load gameplay screen
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/gameplayScreen.fxml"));
             Parent root = loader.load();
 
@@ -37,7 +36,6 @@ public class welcomeController {
             controller.setClientConnection(clientConnection);
 
             Scene scene = new Scene(root, 1500, 750);
-            // Keep the current theme or apply default
             scene.getStylesheets().add(getClass().getResource("/styles/darkTheme.css").toExternalForm());
 
             Stage stage = (Stage) connectButton.getScene().getWindow();

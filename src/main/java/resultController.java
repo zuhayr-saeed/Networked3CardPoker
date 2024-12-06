@@ -20,7 +20,7 @@ public class resultController {
         this.totalWinnings = totalWinnings;
         this.clientConnection = connection;
         resultLabel.setText(resultMessage);
-        winningsLabel.setText("$" + totalWinnings);
+        winningsLabel.setText(String.valueOf(totalWinnings));
     }
 
     @FXML
@@ -30,7 +30,10 @@ public class resultController {
             Parent root = loader.load();
             gameplayController gc = loader.getController();
             gc.setClientConnection(clientConnection);
+            // Keep the winnings from previous rounds
+            gc.setTotalWinnings(this.totalWinnings);
             gc.updateGameInfo("New round started. Place your bets.");
+            // Note: We do not call fresh start. We are continuing the old game with accumulated winnings.
 
             Scene scene = resultLabel.getScene();
             Stage stage = (Stage) scene.getWindow();
